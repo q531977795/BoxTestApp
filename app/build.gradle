@@ -1,0 +1,81 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+
+    signingConfigs {
+        config {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('E:/Android/AndroidStudio_workspace/All_keystore/hisi_keystore/platform.keystore')
+            storePassword 'android'
+        }
+        release {
+            storeFile file("E:/Android/AndroidStudio_workspace/All_keystore/hisi_keystore/hisi_key.jks")
+            storePassword 'android'
+            keyAlias 'key'
+            keyPassword 'android'
+        }
+
+        debug {
+            storeFile file("E:/Android/AndroidStudio_workspace/All_keystore/hisi_keystore/hisi_key.jks")
+            storePassword 'android'
+            keyAlias 'key'
+            keyPassword 'android'
+        }
+    }
+    compileSdkVersion 29
+
+    defaultConfig {
+        applicationId "com.box.tv.test"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0.2"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.config
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    android.applicationVariants.all { variant ->
+        def projectName
+        if (project.hasProperty("applicationName")) {
+            projectName = applicationName
+        } else {
+            projectName = parent.name
+        }
+
+        variant.outputs.all {
+            outputFileName = "CH_" + projectName + "_${defaultConfig.versionName}_${getTime()}_signed.apk"
+        }
+    }
+}
+
+def getTime() {
+    return new Date().format("yyMMdd", TimeZone.getTimeZone("GMT+8"))
+}
+
+dependencies {
+    compileOnly files('libs/framework_base.jar')
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
