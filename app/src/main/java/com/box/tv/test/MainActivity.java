@@ -1,69 +1,51 @@
 package com.box.tv.test;
 
-import android.app.Activity;
+
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-public class MainActivity extends Activity implements View.OnClickListener {
-    //persist.scn.dhcpserver.enabled
-    String TAG = "CH_BoxTest";
-    String value = "";
-    TextView tv_dhcp_value;
-    Button bt_true, bt_false;
+/**
+ * 作者:libeibei
+ * 创建日期:20210226
+ * 类说明:机顶盒测试app主界面
+ **/
+public class MainActivity extends BaseActivity implements View.OnClickListener {
+
+    Intent startIntent;
+    Button btTest_handler;
+    Button btTest_access;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         initView();
-        refreshValue();
     }
 
-    void initView() {
-        tv_dhcp_value = (TextView) findViewById(R.id.tv_value_dhcpserver);
-        bt_true = (Button) findViewById(R.id.button_change_true);
-        bt_false = (Button) findViewById(R.id.button_change_false);
-        bt_true.setOnClickListener(this);
-        bt_false.setOnClickListener(this);
+    private void initView() {
+        btTest_handler = (Button) findViewById(R.id.test_handler);
+        btTest_access = (Button) findViewById(R.id.test_access);
+
+        btTest_handler.setOnClickListener(this);
+        btTest_access.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.button_change_true) {
-            Log.i(TAG, "-----> clicked true");
-            Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+        startIntent = new Intent();
+        switch (view.getId()) {
+            case R.id.test_handler:
+                startIntent.setClassName("com.box.tv.test", "com.box.tv.test.activity.HandlerActivity");
+                break;
+            case R.id.test_access:
+                startIntent.setClassName("com.box.tv.test", "com.box.tv.test.activity.AccessibilityActivity");
+                break;
+            default:
+                break;
         }
-        if (view.getId() == R.id.button_change_false) {
-            Log.i(TAG, "-----> clicked false");
-            Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 0);
 
-
-        }
-        refreshValue();
+        startActivity(startIntent);
     }
-
-    private void refreshValue() {
-        String settingValue = Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-        tv_dhcp_value.setText("" + settingValue.toString());
-    }
-
-    /**
-     * 重启“川流TV”无障碍服务
-     */
-    protected void restartAccessService(){
-
-
-    }
-
-
 }
